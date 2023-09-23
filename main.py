@@ -44,12 +44,12 @@ def display_inventory(inv: dict):
 
 
 def craft_item(data: dict, item: tools.Craftable):
-    new_inv = data["inventory"].copy()
     for cost in item.cost:
-        if new_inv[cost[0]] >= cost[1]:
-            new_inv[cost[0]] -= cost[1]
-        else:
+        if data["inventory"][cost[0]] < cost[1]:
             return data
+
+    for cost in item.cost:
+        data["inventory"][cost[0]] -= cost[1]
 
     if item in data["tools"]:
         data["tools"][item] += 1
@@ -83,8 +83,6 @@ while active:
             player_data["inventory"] = forage(player_data["location"], player_data["inventory"], 1)
         case "craft":
             new_item = input("Select craftable: ")
-            apply, new_data = craft_item(player_data, getattr(tools, new_item))
-            if apply:
-                player_data = new_data
+            player_data = craft_item(player_data, getattr(tools, new_item))
         case "exit":
             active = False
