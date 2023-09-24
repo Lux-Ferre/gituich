@@ -1,13 +1,19 @@
 import random
+
 from tabulate import tabulate
 
+import player
+import utils
 import regions
 import entities
 
 
-def forage(region, inv: dict, quantity: int) -> dict:
+def forage(region, inv: dict, quantity: int) -> tuple[str, dict]:
     possible_items = []
     weights = []
+
+    if not region.available_items:
+        return "No items available here!", inv
 
     for item in region.available_items:
         possible_items.append(item[0])
@@ -21,7 +27,9 @@ def forage(region, inv: dict, quantity: int) -> dict:
         else:
             inv[item] = 1
 
-    return inv
+    notify = f"You found: {found_items}"
+
+    return notify, inv
 
 
 def display_inventory(inv: dict):
@@ -60,44 +68,38 @@ def display_tools(player_tools: dict):
     print(tabulate(table, headers='firstrow', tablefmt='fancy_grid'))
 
 
-def craft_item(data: dict, item: entities.Craftable):
+def craft_item(data: player.Player, item: entities.Craftable) -> tuple[str, player.Player]:
     for cost in item.cost:
-        if data["inventory"][cost[0]] < cost[1]:
-            return data
+        if data.inventory[cost[0]] < cost[1]:
+            return f"You did not have enough {cost[0]}", data
 
     for cost in item.cost:
-        data["inventory"][cost[0]] -= cost[1]
+        data.inventory[cost[0]] -= cost[1]
 
     # noinspection PyTypeChecker
     if issubclass(item, entities.Tool):
-        if item in data["tools"]:
-            data["tools"][item] += 1
-        else:
-            data["tools"][item] = 1
+        data.add_tool(item, 1)
+    else:
+        data.add_item(item, 1)
 
-    return data
+    return f"{item} successfully crafted", data
 
 
-player_data = {
-    "location": None,
-    "inventory": {},
-    "tools": {},
-    "money": 0
-}
+player_data = player.Player(display="Lux")
 
-player_data["inventory"] = forage(regions.Forest, player_data["inventory"], 20)
+_, player_data.inventory = forage(regions.Forest, player_data.inventory, 20)
 
 active = True
-invalid_action = False
+notification = ""
 
 while active:
-    print(f"Current location: {player_data['location']}")
-    display_inventory(player_data["inventory"])
-    display_tools(player_data["tools"])
+    utils.clear()
+    print(f"Current location: {player_data.location}")
+    display_inventory(player_data.inventory)
+    display_tools(player_data.tools)
 
-    if invalid_action:
-        print("You entered an invalid action.")
-        invalid_action = False
+    print(f"**{notification}**")
+    notification = ""
 
     print("""Available actions:
     1) Travel
@@ -121,25 +123,28 @@ while active:
                     new_location = None
 
             if new_location:
-                player_data["location"] = getattr(regions, new_location)
+                player_data.location = getattr(regions, new_location)
 
         case "2":
-            player_data["inventory"] = forage(player_data["location"], player_data["inventory"], 1)
+            notification, player_data.inventory = forage(player_data.location, player_data.inventory, 1)
         case "3":
             print(f"Available crafts:")
             print(f"    1) Basket - {entities.Basket.description}")
+            print(f"    2) Rope - {entities.Rope.description}")
             selection = input("Select craftable: ")
 
             match selection:
                 case "1":
                     new_item = "Basket"
+                case "2":
+                    new_item = "Rope"
                 case _:
                     new_item = None
 
             if new_item:
-                player_data = craft_item(player_data, getattr(entities, new_item))
+                notification, player_data = craft_item(player_data, getattr(entities, new_item))
 
         case "4":
             active = False
         case _:
-            invalid_action = True
+            notification = "That is an invalid action."

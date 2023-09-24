@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 
 @dataclass
 class Entity:
+    display: str = ""
     description: str = ""
     max_quantity: float = float('inf')
 
@@ -18,7 +19,7 @@ class Obtainable():
 
 
 @dataclass
-class Craftable(Obtainable):
+class Craftable(NonLiving, Obtainable):
     cost: list[tuple[Obtainable, int]] = field(default_factory=list)
 
 
@@ -29,20 +30,30 @@ class Tool:
 
 @dataclass
 class Stick(NonLiving, Obtainable):
-    value = 15
+    value = 1
     weight = 3
 
 
 @dataclass
 class Vine(NonLiving, Obtainable):
-    value = 20
+    value = 4
     weight = 1
 
 
 @dataclass
 class Stone(NonLiving, Obtainable):
-    value = 5
+    value = 2
     weight = 5
+
+
+@dataclass
+class Rope(Craftable):
+    cost = [
+        (Vine, 3),
+    ]
+    value = 15
+    weight = 3
+    description = "A simple rope made from braided vines."
 
 
 @dataclass
