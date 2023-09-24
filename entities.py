@@ -1,9 +1,10 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
 class Entity:
-    pass
+    description: str = ""
+    max_quantity: float = float('inf')
 
 
 @dataclass
@@ -12,8 +13,18 @@ class NonLiving(Entity):
 
 
 @dataclass
-class Obtainable:
+class Obtainable():
     value: int = 0
+
+
+@dataclass
+class Craftable(Obtainable):
+    cost: list[tuple[Obtainable, int]] = field(default_factory=list)
+
+
+@dataclass
+class Tool:
+    pass
 
 
 @dataclass
@@ -32,3 +43,13 @@ class Vine(NonLiving, Obtainable):
 class Stone(NonLiving, Obtainable):
     value = 5
     weight = 5
+
+
+@dataclass
+class Basket(Craftable, Tool):
+    cost = [
+        (Vine, 1),
+        (Stick, 10),
+    ]
+    description = "Allows you to carry more items when foraging."
+    max_quantity = 1
