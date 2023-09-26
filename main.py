@@ -68,10 +68,39 @@ def display_tools(player_tools: dict):
     print(tabulate(table, headers='firstrow', tablefmt='fancy_grid'))
 
 
+def get_available_crafts(data: player.Player) -> list:
+    craftables = [
+        entities.Basket,
+        entities.Rope,
+    ]
+
+    print(f"Available crafts:")
+
+    available = []
+
+    for craft in craftables:
+        max_allowed = craft.max_quantity
+        if issubclass(craft, entities.Tool):
+            if not data.has_tool(craft, max_allowed):
+                available.append(craft)
+        else:
+            if not data.has_item(craft, max_allowed):
+                available.append(craft)
+
+    return available
+
+
+def display_crafts(crafts: list):
+    for i, craft in enumerate(crafts):
+        print(f"\t {i+1}) {craft.display} - {craft.description}")
+
+
 def craft_item(data: player.Player, item: entities.Craftable) -> tuple[str, player.Player]:
     for cost in item.cost:
-        if data.inventory[cost[0]] < cost[1]:
-            return f"You did not have enough {cost[0]}", data
+        required_item = cost[0]
+        num = cost[1]
+        if not data.has_item(required_item, num):
+            return f"You did not have enough {required_item}", data
 
     for cost in item.cost:
         data.inventory[cost[0]] -= cost[1]
@@ -128,21 +157,15 @@ while active:
         case "2":
             notification, player_data.inventory = forage(player_data.location, player_data.inventory, 1)
         case "3":
-            print(f"Available crafts:")
-            print(f"    1) Basket - {entities.Basket.description}")
-            print(f"    2) Rope - {entities.Rope.description}")
-            selection = input("Select craftable: ")
+            available_crafts = get_available_crafts(player_data)
 
-            match selection:
-                case "1":
-                    new_item = "Basket"
-                case "2":
-                    new_item = "Rope"
-                case _:
-                    new_item = None
+            display_crafts(available_crafts)
+            selection = int(input("Select craftable: ")) - 1        # Change to int and decrement to match list index
+
+            new_item = available_crafts[selection]
 
             if new_item:
-                notification, player_data = craft_item(player_data, getattr(entities, new_item))
+                notification, player_data = craft_item(player_data, new_item)
 
         case "4":
             active = False

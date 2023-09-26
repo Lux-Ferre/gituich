@@ -17,18 +17,18 @@ class Player:
             if self.tools[tool] >= num:
                 return True
 
+    def add_tool(self, tool: entities.Tool, num: int):
+        if tool in self.tools:
+            self.tools[tool] += num
+        else:
+            self.tools[tool] = num
+
     def has_item(self, item: entities.Obtainable, num: int):
         if item in self.inventory:
             if self.inventory[item] >= num:
                 return True
 
         return False
-
-    def add_tool(self, tool: entities.Tool, num: int):
-        if tool in self.tools:
-            self.tools[tool] += num
-        else:
-            self.tools[tool] = num
 
     def add_item(self, item: entities.Obtainable, num: int):
         if item in self.inventory:
