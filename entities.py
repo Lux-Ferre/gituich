@@ -30,24 +30,28 @@ class Tool:
 
 @dataclass
 class Stick(NonLiving, Obtainable):
+    display = "Stick"
     value = 1
     weight = 3
 
 
 @dataclass
 class Vine(NonLiving, Obtainable):
+    display = "Vine"
     value = 4
     weight = 1
 
 
 @dataclass
 class Stone(NonLiving, Obtainable):
+    display = "Stone"
     value = 2
     weight = 5
 
 
 @dataclass
 class Rope(Craftable):
+    display = "Rope"
     cost = [
         (Vine, 3),
     ]
@@ -58,6 +62,7 @@ class Rope(Craftable):
 
 @dataclass
 class Basket(Craftable, Tool):
+    display = "Basket"
     cost = [
         (Vine, 1),
         (Stick, 10),
