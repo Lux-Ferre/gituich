@@ -51,7 +51,7 @@ def display_inventory(inv: dict):
     table = [titles]
 
     for item in inv:
-        name = item.__name__
+        name = item.display
         qty = inv[item]
         value = item.value
         weight = item.weight
@@ -70,7 +70,7 @@ def display_tools(player_tools: dict):
     table = [titles]
 
     for tool in player_tools:
-        name = tool.__name__
+        name = tool.display
         qty = player_tools[tool]
         max_qty = tool.max_quantity
         desc = tool.description
@@ -176,9 +176,9 @@ while active:
             available_crafts = get_available_crafts(player_data)
 
             display_crafts(available_crafts)
-            selection = int(input("Select craftable: ")) - 1        # Change to int and decrement to match list index
+            user_input = int(input("Select craftable: ")) - 1        # Change to int and decrement to match list index
 
-            new_item = available_crafts[selection]
+            new_item = available_crafts[user_input]
 
             if new_item:
                 notification, player_data = craft_item(player_data, new_item)
