@@ -14,12 +14,12 @@ class NonLiving(Entity):
 
 
 @dataclass
-class Obtainable():
+class Obtainable(NonLiving):
     value: int = 0
 
 
 @dataclass
-class Craftable(NonLiving, Obtainable):
+class Craftable(Obtainable):
     cost: list[tuple[Obtainable, int]] = field(default_factory=list)
 
 
@@ -29,21 +29,21 @@ class Tool:
 
 
 @dataclass
-class Stick(NonLiving, Obtainable):
+class Stick(Obtainable):
     display = "Stick"
     value = 1
     weight = 3
 
 
 @dataclass
-class Vine(NonLiving, Obtainable):
+class Vine(Obtainable):
     display = "Vine"
     value = 4
     weight = 1
 
 
 @dataclass
-class Stone(NonLiving, Obtainable):
+class Stone(Obtainable):
     display = "Stone"
     value = 2
     weight = 5
