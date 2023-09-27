@@ -11,7 +11,7 @@ class Region:
 
 @dataclass
 class Forest(Region):
-    display = ""
+    display = "The Forest"
     available_items = [
         (entities.Stick, 65),
         (entities.Vine, 10),
