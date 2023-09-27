@@ -2,6 +2,7 @@ import random
 
 from tabulate import tabulate
 from collections import Counter
+from typing import Type
 
 import player
 import utils
@@ -31,6 +32,18 @@ def forage(data: player.Player, quantity: int) -> tuple[str, player.Player]:
         notify += f"{item[0].display}: {item[1]} |"
 
     return notify, data
+
+
+def change_region(data: player.Player, selection: str, region_list: list[Type[regions.Region]]) -> tuple[str, player.Player]:
+    if selection.isdigit():
+        selection = int(selection)
+        if 0 <= selection <= len(region_list):
+            new_region = region_list[selection]
+            data.location = new_region
+
+            return f"You have moved to {new_region.display}.", data
+
+    return "Invalid location selected. You have not moved.", data
 
 
 def display_inventory(inv: dict):
@@ -96,12 +109,24 @@ def display_crafts(crafts: list):
         print(f"\t {i+1}) {craft.display} - {craft.description}")
 
 
+def display_regions(region_list: list[Type[regions.Region]]):
+    print(f"Available regions:")
+
+    for i, region in enumerate(region_list):
+        print(f"{i}) {region.display}")
+
+
+def display_notification(notify: str):
+    print(f"**{notify}**")
+    return ""
+
+
 def craft_item(data: player.Player, item: entities.Craftable) -> tuple[str, player.Player]:
     for cost in item.cost:
         required_item = cost[0]
         num = cost[1]
         if not data.has_item(required_item, num):
-            return f"You did not have enough {required_item}", data
+            return f"You did not have enough {required_item.display}", data
 
     for cost in item.cost:
         data.inventory[cost[0]] -= cost[1]
@@ -126,8 +151,7 @@ while active:
     display_inventory(player_data.inventory)
     display_tools(player_data.tools)
 
-    print(f"**{notification}**")
-    notification = ""
+    notification = display_notification(notification)
 
     print("""Available actions:
     1) Travel
@@ -140,18 +164,11 @@ while active:
 
     match action:
         case "1":
-            print(f"Available regions:")
-            print(f"    0) Home")
-            print(f"    1) Forest")
-            selection = input("Where to: ")
+            all_regions = [regions.PlayerHouse, regions.Forest]
+            display_regions(all_regions)
+            user_input = input("Where to: ")
 
-            match selection:
-                case "0":
-                    player_data.location = regions.PlayerHouse
-                case "1":
-                    player_data.location = regions.Forest
-                case _:
-                    notification = "Invalid location selected. You have not moved."
+            notification, player_data = change_region(player_data, user_input, all_regions)
 
         case "2":
             notification, player_data = forage(player_data, 5)
