@@ -1,16 +1,13 @@
-from dataclasses import dataclass, field
-
-import regions
 import entities
 
 
-@dataclass
 class Player:
-    display: str = "Player"
-    location: regions.Region = regions.PlayerHouse
-    inventory: dict = field(default_factory=dict)
-    tools: dict = field(default_factory=dict)
-    money: int = 0
+    def __init__(self, player_name: str = "Player"):
+        self.display = player_name
+        self.location = None
+        self.inventory = {}
+        self.tools = {}
+        self.money = 0
 
     def has_tool(self, tool: entities.Tool, num: int):
         if tool in self.tools:

@@ -1,25 +1,27 @@
-from dataclasses import dataclass
-
-import entities
-
-
-@dataclass
 class Region:
-    available_items: list[tuple[entities.Obtainable, int]]
-    display: str = ""
+    def __init__(self, display: str, available_items: list[tuple[str, int]]):
+        self.available_items = available_items
+        self.display = display
 
 
-@dataclass
-class Forest(Region):
-    display = ""
-    available_items = [
-        (entities.Stick, 65),
-        (entities.Vine, 10),
-        (entities.Stone, 25),
-    ]
+def generate_regions():
+    region_data = {
+        "forest": {
+            "display": "Forest",
+            "available_items": [
+                ("stick", 65),
+                ("vine", 10),
+                ("stone", 25),
+            ]
+        },
+        "home": {
+            "display": "Your home",
+            "available_items": [],
+            },
+    }
 
+    regions = {}
+    for region, data in region_data.items():
+        regions[region] = Region(data["display"], data["available_items"])
 
-@dataclass
-class PlayerHouse(Region):
-    display = "Your home."
-    available_items = []
+    return regions
