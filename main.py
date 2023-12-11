@@ -1,25 +1,29 @@
 import random
 
 from tabulate import tabulate
+from collections import Counter
 
 from player import Player
 import utils
 import regions
-import entities
+from entities import generate_entities
 
 
 class Game:
     def __init__(self):
         self.player = Player("Lux")
         self.regions = regions.generate_regions()
+        self.entities = generate_entities()
+        self.notification = ""
 
-    def forage(self, quantity: int = 1) -> str:
+    def forage(self, quantity: int = 1):
         possible_items = []
         weights = []
         current_region = self.player.location
 
         if not current_region.available_items:
-            return "No items available here!"
+            self.notification = "No items available here!"
+            return
 
         for item in current_region.available_items:
             possible_items.append(item[0])
@@ -27,23 +31,25 @@ class Game:
 
         found_items = random.choices(population=possible_items, weights=weights, k=quantity)
 
-        for item in found_items:
-            if item in self.player.inventory:
-                self.player.inventory[item] += 1
-            else:
-                self.player.inventory[item] = 1
+        notify = f"You found: "
 
-        notify = f"You found: {found_items}"
+        item_count = Counter(found_items).most_common()
 
-        return notify
+        for item in item_count:
+            self.player.add_item(item[0], item[1])
+            notify += f"{self.entities[item[0]].display}: {item[1]} |"
+
+        self.notification = notify
 
     def display_inventory(self):
         titles = ["Item", "Qty", "Value(ea)", "Value(tot)", "Weight(ea)", "Weight(tot)"]
         table = [titles]
 
-        for item in self.player.inventory:
-            name = item.__name__
-            qty = self.player.inventory[item]
+        for item_name in self.player.inventory:
+            item = self.entities[item_name]
+
+            name = item.display
+            qty = self.player.inventory[item_name]
             value = item.value
             weight = item.weight
             total_value = value * qty
@@ -59,8 +65,9 @@ class Game:
         titles = ["Name", "Qty", "Max Qty", "Description"]
         table = [titles]
 
-        for tool in self.player.tools:
-            name = tool.__name__
+        for tool_name in self.player.tools:
+            tool = self.entities[tool_name]
+            name = tool.display
             qty = self.player.tools[tool]
             max_qty = tool.max_quantity
             desc = tool.description
@@ -71,28 +78,54 @@ class Game:
 
         print(tabulate(table, headers='firstrow', tablefmt='fancy_grid'))
 
-    def craft_item(self, item: entities.Craftable) -> str:
-        for cost in item.cost:
-            if self.player.inventory[cost[0]] < cost[1]:
-                return f"You did not have enough {cost[0]}"
+    def craft_item(self, item: str):
+        item_data = self.entities[item]
+        for cost in item_data.cost:
+            required_item = cost[0]
+            num = cost[1]
 
-        for cost in item.cost:
+            if not self.player.has_item(required_item, num):
+                self.notification = f"You did not have enough {item_data.display}"
+                return
+
+        for cost in item_data.cost:
             self.player.inventory[cost[0]] -= cost[1]
 
-        # noinspection PyTypeChecker
-        if issubclass(item, entities.Tool):
+        if item_data.is_tool:
             self.player.add_tool(item, 1)
         else:
             self.player.add_item(item, 1)
 
-        return f"{item} successfully crafted"
+        self.notification = f"{item} successfully crafted"
+
+    def display_regions(self):
+        region_list = []
+        print("Available regions: ")
+        for i, region in enumerate(self.regions):
+            region_data = self.regions[region]
+            print(f"{i}) {region_data.display}")
+            region_list.append(region)
+
+        return region_list
+
+    def display_crafts(self):
+        craftables = {
+            key: value for key, value in self.entities.items() if value.is_craftable
+        }
+
+        craft_list = []
+
+        for i, (name, data) in enumerate(craftables.items()):
+            print(f"\t {i+1}) {data.display} - {data.description}")
+            craft_list.append(name)
+
+        return craft_list
 
     def start(self):
         self.player.location = self.regions.get("forest")
         self.forage(20)
         self.player.location = self.regions.get("home")
         active = True
-        notification = ""
 
         while active:
             utils.clear()
@@ -100,8 +133,8 @@ class Game:
             game_main.display_inventory()
             game_main.display_tools()
 
-            print(f"**{notification}**")
-            notification = ""
+            print(f"**{self.notification}**")
+            self.notification = ""
 
             print("""Available actions:
             1) Travel
@@ -114,42 +147,27 @@ class Game:
 
             match action:
                 case "1":
-                    print(f"Available regions:")
-                    print(f"    1) Forest")
-                    selection = input("Where to: ")
+                    region_list = self.display_regions()
+                    selection = int(input("Where to: "))
 
-                    match selection:
-                        case "1":
-                            new_location = "forest"
-                        case _:
-                            new_location = None
+                    new_location = region_list[selection]
 
-                    if new_location:
-                        game_main.player.location = self.regions.get(new_location, "home")
+                    game_main.player.location = self.regions.get(new_location, "home")
 
                 case "2":
-                    notification = game_main.forage()
+                    game_main.forage()
                 case "3":
-                    print(f"Available crafts:")
-                    print(f"    1) Basket - {entities.Basket.description}")
-                    print(f"    2) Rope - {entities.Rope.description}")
-                    selection = input("Select craftable: ")
+                    craft_list = self.display_crafts()
+                    selection = int(input("Select craftable: ")) -1
 
-                    match selection:
-                        case "1":
-                            new_item = "Basket"
-                        case "2":
-                            new_item = "Rope"
-                        case _:
-                            new_item = None
+                    crafted_item = craft_list[selection]
 
-                    if new_item:
-                        notification = game_main.craft_item(getattr(entities, new_item))
+                    game_main.craft_item(crafted_item)
 
                 case "4":
                     active = False
                 case _:
-                    notification = "That is an invalid action."
+                    self.notification = "That is an invalid action."
 
 
 game_main = Game()

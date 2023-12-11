@@ -6,6 +6,10 @@ class Region:
 
 def generate_regions():
     region_data = {
+        "home": {
+            "display": "Your home",
+            "available_items": [],
+            },
         "forest": {
             "display": "Forest",
             "available_items": [
@@ -14,10 +18,6 @@ def generate_regions():
                 ("stone", 25),
             ]
         },
-        "home": {
-            "display": "Your home",
-            "available_items": [],
-            },
     }
 
     regions = {}
