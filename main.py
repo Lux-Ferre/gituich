@@ -1,6 +1,9 @@
 import random
 import json
+import subprocess
 import threading
+import os
+import sys
 
 from tabulate import tabulate
 from collections import Counter
@@ -185,6 +188,16 @@ class Game:
         self.player.location = self.regions.get("forest")
         self.forage(20)
         self.player.location = self.regions.get("home")
+        print(os.getcwd())
+
+        client_path = r"ui\index.html"
+
+        if sys.platform.startswith("linux"):
+            subprocess.call(["xdg-open", client_path])
+        else:
+            os.startfile(client_path)
+
+        os.startfile(r"ui\index.html")
 
 
 class WebsocketHandler:
