@@ -190,14 +190,12 @@ class Game:
         self.player.location = self.regions.get("home")
         print(os.getcwd())
 
-        client_path = r"ui\index.html"
+        client_path = os.path.join("ui", "index.html")
 
         if sys.platform.startswith("linux"):
             subprocess.call(["xdg-open", client_path])
         else:
             os.startfile(client_path)
-
-        os.startfile(r"ui\index.html")
 
 
 class WebsocketHandler:
