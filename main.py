@@ -12,6 +12,7 @@ from websocket_server import WebsocketServer
 from player import Player
 import regions
 from entities import generate_entities
+from player_home import get_default_home
 
 
 class Game:
@@ -19,6 +20,7 @@ class Game:
         self.ws: WebsocketHandler = ws
         self.client_connected = False
         self.player = Player("Lux")
+        self.player_home = get_default_home("clearing")
         self.regions = regions.generate_regions()
         self.entities = generate_entities()
         self.notification = ""
@@ -62,7 +64,11 @@ class Game:
     def change_region(self, selection: int):
         new_location = list(self.regions.keys())[selection]
 
-        game_main.player.location = self.regions.get(new_location, "home")
+        game_main.player.location = self.regions.get(new_location, self.regions["home"])
+
+        if game_main.player.location == self.regions["home"]:
+            self.drop_off_items()
+
         self.display_main_menu()
 
     def forage(self, quantity: int = 1):
@@ -90,15 +96,20 @@ class Game:
 
         self.notification = notify
 
-    def display_inventory(self):
+    def display_inventory(self, inventory_id: str):
         titles = ["Item", "Qty", "Value(ea)", "Value(tot)", "Weight(ea)", "Weight(tot)"]
         table = [titles]
 
-        for item_name in self.player.inventory:
+        if inventory_id == "Your home":
+            inventory = self.player_home.storage
+        else:
+            inventory = self.player.inventory
+
+        for item_name in inventory:
             item = self.entities[item_name]
 
             name = item.display
-            qty = self.player.inventory[item_name]
+            qty = inventory[item_name]
             value = item.value
             weight = item.weight
             total_value = value * qty
@@ -116,14 +127,14 @@ class Game:
             required_item = cost[0]
             num = cost[1]
 
-            if not self.player.has_item(required_item, num):
+            if not self.player_home.is_in_storage(required_item, num):
                 self.notification = f"You did not have enough {required_item}"
                 return
 
         for cost in item_data.cost:
-            self.player.inventory[cost[0]] -= cost[1]
+            self.player_home.storage[cost[0]] -= cost[1]
 
-        self.player.add_item(item, 1)
+        self.player_home.add_to_storage(item, 1)
 
         self.notification = f"{item} successfully crafted"
 
@@ -149,7 +160,7 @@ class Game:
     def display_main_menu(self):
         self.ws.update_display("", True)
         self.ws.update_display(f"Current location: {game_main.player.location.display}")
-        game_main.display_inventory()
+        game_main.display_inventory(self.player.location.display)
 
         self.ws.update_display(f"**{self.notification}**")
         self.notification = ""
@@ -162,6 +173,12 @@ class Game:
         """)
 
         self.action = "main"
+
+    def drop_off_items(self):
+        for item, qty in self.player.inventory.items():
+            self.player_home.add_to_storage(item, qty)
+
+        self.player.inventory = {}
 
     def start(self):
         self.player.location = self.regions.get("forest")
