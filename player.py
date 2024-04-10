@@ -3,13 +3,8 @@ class Player:
         self.display = player_name
         self.location = None
         self.inventory = {}
-        self.tools = {}
+        self.equipped_items = {}
         self.money = 0
-
-    def has_tool(self, tool: str, num: int):
-        if tool in self.tools:
-            if self.tools[tool] >= num:
-                return True
 
     def has_item(self, item: str, num: int):
         if item in self.inventory:
@@ -18,14 +13,20 @@ class Player:
 
         return False
 
-    def add_tool(self, tool: str, num: int):
-        if tool in self.tools:
-            self.tools[tool] += num
-        else:
-            self.tools[tool] = num
-
     def add_item(self, item: str, num: int):
         if item in self.inventory:
             self.inventory[item] += num
         else:
             self.inventory[item] = num
+
+    def reset_equips(self):
+        self.equipped_items = {
+            "head": "",
+            "neck": "",
+            "torso": "",
+            "left_hand": "",
+            "right_hand": "",
+            "belt": "",
+            "legs": "",
+            "feet": "",
+        }

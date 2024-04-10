@@ -12,7 +12,10 @@ class Entity:
     is_obtainable: bool = False
     is_alive: bool = False
     is_craftable: bool = False
-    is_tool: bool = False
+    is_equippable: bool = False
+    foraging_multiplier: float = 1
+    capacity: int = 0
+    equipment_slots: list = field(default_factory=list)
 
 
 def generate_entities():
@@ -45,7 +48,7 @@ def generate_entities():
         "basket": {"display": "Basket",
                    "is_obtainable": True,
                    "is_craftable": True,
-                   "is_tool": True,
+                   "is_equippable": True,
                    "cost": [
                        ("vine", 1),
                        ("stick", 10),

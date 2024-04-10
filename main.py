@@ -110,23 +110,6 @@ class Game:
 
         self.ws.update_display(tabulate(table, headers='firstrow', tablefmt='fancy_grid'))
 
-    def display_tools(self):
-        titles = ["Name", "Qty", "Max Qty", "Description"]
-        table = [titles]
-
-        for tool_name in self.player.tools:
-            tool = self.entities[tool_name]
-            name = tool.display
-            qty = self.player.tools[tool]
-            max_qty = tool.max_quantity
-            desc = tool.description
-
-            new_row = [name, qty, max_qty, desc]
-
-            table.append(new_row)
-
-        self.ws.update_display(tabulate(table, headers='firstrow', tablefmt='fancy_grid'))
-
     def craft_item(self, item: str):
         item_data = self.entities[item]
         for cost in item_data.cost:
@@ -140,10 +123,7 @@ class Game:
         for cost in item_data.cost:
             self.player.inventory[cost[0]] -= cost[1]
 
-        if item_data.is_tool:
-            self.player.add_tool(item, 1)
-        else:
-            self.player.add_item(item, 1)
+        self.player.add_item(item, 1)
 
         self.notification = f"{item} successfully crafted"
 
@@ -170,7 +150,6 @@ class Game:
         self.ws.update_display("", True)
         self.ws.update_display(f"Current location: {game_main.player.location.display}")
         game_main.display_inventory()
-        game_main.display_tools()
 
         self.ws.update_display(f"**{self.notification}**")
         self.notification = ""
