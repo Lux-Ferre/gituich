@@ -1,16 +1,17 @@
+# Full imports
 import random
-import json
 import subprocess
-import threading
 import os
 import sys
 
+# Partial imports
 from tabulate import tabulate
 from collections import Counter
-from websocket_server import WebsocketServer
 
-from player import Player
+# Local imports
 import regions
+from websocket_handler import WebsocketHandler
+from player import Player
 from entities import generate_entities
 from player_home import get_default_home
 
