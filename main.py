@@ -5,6 +5,7 @@ import os
 import sys
 
 # Partial imports
+from queue import Queue
 from tabulate import tabulate
 from collections import Counter
 
@@ -47,7 +48,7 @@ class Game:
                     self.ws.update_display("Where to: ")
                     self.action = "change_region"
                 case "2":
-                    game_main.forage()
+                    self.forage()
                     self.display_main_menu()
                 case "3":
                     self.display_crafts()
@@ -65,9 +66,9 @@ class Game:
     def change_region(self, selection: int):
         new_location = list(self.regions.keys())[selection]
 
-        game_main.player.location = self.regions.get(new_location, self.regions["home"])
+        self.player.location = self.regions.get(new_location, self.regions["home"])
 
-        if game_main.player.location == self.regions["home"]:
+        if self.player.location == self.regions["home"]:
             self.drop_off_items()
 
         self.display_main_menu()
@@ -195,8 +196,9 @@ class Game:
             os.startfile(client_path)
 
 
-ws_handler = WebsocketHandler()
+input_queue = Queue()
+ws_handler = WebsocketHandler(input_queue)
 ws_handler.run()
 
-game_main = Game(ws_handler)
+game_main = Game(ws_handler, input_queue)
 game_main.start()

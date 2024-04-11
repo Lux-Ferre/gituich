@@ -1,11 +1,13 @@
 import threading
 import json
 
+from queue import Queue
 from websocket_server import WebsocketServer
 
 
 class WebsocketHandler:
-    def __init__(self):
+    def __init__(self, input_queue: Queue):
+        self.input_queue = input_queue
         self.server = WebsocketServer(port=8099)
         self.server.set_fn_new_client(self.on_connect)
         self.server.set_fn_message_received(self.message_received)
