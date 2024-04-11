@@ -1,6 +1,9 @@
 class UI{
 	constructor() {
-		this.displayField = document.getElementById("displayField")
+		this.dataField = document.getElementById("displayData")
+		this.notification = document.getElementById("displayNotification")
+		this.player = document.getElementById("displayPlayer")
+		this.region = document.getElementById("displayRegions")
 	}
 	
 	update_display(instruction){
@@ -8,9 +11,20 @@ class UI{
 		const message = instruction.message
 		
 		if(clear){
-			this.displayField.value = message
+			this.dataField.value = message
 		} else {
-			this.displayField.value = this.displayField.value + message
+			this.dataField.value = this.dataField.value + message
+		}
+	}
+
+	update_notification(instruction){
+		const clear = instruction.clear
+		const message = instruction.message
+
+		if(clear){
+			this.notification.value = message
+		} else {
+			this.notification.value = this.notification.value + message
 		}
 	}
 }

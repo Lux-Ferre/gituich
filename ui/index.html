@@ -10,17 +10,32 @@
 
 <body>
     <div class="container w-100 vh-100">
-        <div class="row h-75">
-            <div class="col-12 h-100"><textarea id="displayField" class="w-100 h-100"></textarea></div>
-        </div>
-        <div class="row" style="margin-top: 10px;">
+        <div class="row vh-100">
             <div class="col">
-                <form id="submissionForm">
-                    <div class="row">
-                        <div class="col-11"><input class="form-control" type="text" id="formInput"></div>
-                        <div class="col-1"><input class="btn btn-primary" type="submit"></div>
+                <div class="row" style="height: 45%;">
+                    <div class="col"><textarea id="displayNotification" class="w-100 h-100"></textarea></div>
+                </div>
+                <div class="row" style="height: 45%;">
+                    <div class="col"><textarea id="displayData" class="w-100 h-100"></textarea></div>
+                </div>
+                <div class="row" style="height: 10%;">
+                    <div class="col">
+                        <form id="submissionForm">
+                            <div class="row">
+                                <div class="col-10"><input class="form-control" type="text" id="formInput"></div>
+                                <div class="col-2"><input class="btn btn-primary" type="submit" value="Go"></div>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
+            </div>
+            <div class="col d-flex flex-column justify-content-evenly">
+                <div class="row" style="height: 50%;">
+                    <div class="col"><textarea id="displayPlayer" class="w-100 h-100"></textarea></div>
+                </div>
+                <div class="row" style="height: 50%;">
+                    <div class="col"><textarea id="displayRegions" class="w-100 h-100"></textarea></div>
+                </div>
             </div>
         </div>
     </div>

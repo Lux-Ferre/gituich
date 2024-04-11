@@ -6,7 +6,8 @@ class WebsocketHandler{
 	constructor(){
 		this.dispatch_map = {
 			log: this.log_this,
-			display: this.display_message
+			display: this.display_message,
+			notification: this.display_notification
 		}
 	}
 	
@@ -33,6 +34,10 @@ class WebsocketHandler{
 	}
 	
 	display_message(parsed_message){
+		window.ui.update_display(parsed_message.payload)
+	}
+
+	display_notification(parsed_message){
 		window.ui.update_display(parsed_message.payload)
 	}
 }
