@@ -27,11 +27,11 @@ class WebsocketHandler:
             "payload": f"You have been assigned client id: {client['id']}"
         }
         self.game_client = client
-        game_main.display_main_menu()
+        self.input_queue.put({"method": "display_main_menu", "payload": None})
         server.send_message(client, json.dumps(response))
 
     def message_received(self, client: dict, server: WebsocketServer, message: str):
-        game_main.dispatch_action(message)
+        self.input_queue.put({"method": "input", "payload": message})
 
     def update_display(self, message, clear: bool = False):
         response = {

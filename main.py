@@ -18,8 +18,9 @@ from player_home import get_default_home
 
 
 class Game:
-    def __init__(self, ws):
+    def __init__(self, ws, ui_queue: Queue):
         self.ws: WebsocketHandler = ws
+        self.ui_queue = ui_queue
         self.client_connected = False
         self.player = Player("Lux")
         self.player_home = get_default_home("clearing")
@@ -195,10 +196,19 @@ class Game:
         else:
             os.startfile(client_path)
 
+        while True:
+            instruction = self.ui_queue.get()   # {"method": "methodName", "payload": {}}
+            if instruction["method"] == "display_main_menu":
+                self.display_main_menu()
+            else:
+                self.dispatch_action(instruction["payload"])
 
-input_queue = Queue()
-ws_handler = WebsocketHandler(input_queue)
-ws_handler.run()
 
-game_main = Game(ws_handler, input_queue)
-game_main.start()
+if __name__ == "__main__":
+    user_input_queue = Queue()
+
+    ws_handler = WebsocketHandler(user_input_queue)
+    ws_handler.run()
+
+    game_main = Game(ws_handler, user_input_queue)
+    game_main.start()
