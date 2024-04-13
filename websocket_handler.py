@@ -27,11 +27,12 @@ class WebsocketHandler:
             "payload": f"You have been assigned client id: {client['id']}"
         }
         self.game_client = client
-        self.input_queue.put({"method": "display_main_menu", "payload": None})
+        self.input_queue.put({"method": "change_region", "payload": "home"})
         server.send_message(client, json.dumps(response))
 
     def message_received(self, client: dict, server: WebsocketServer, message: str):
-        self.input_queue.put({"method": "input", "payload": message})
+        data_packet = json.loads(message)
+        self.input_queue.put(data_packet)
 
     def update_display(self, message, clear: bool = False):
         response = {
@@ -39,6 +40,33 @@ class WebsocketHandler:
             "payload": {
                 "clear": clear,
                 "message": "\n" + message
+            }
+        }
+        self.server.send_message(self.game_client, json.dumps(response))
+
+    def show_notification(self, message):
+        response = {
+            "command": "notify",
+            "payload": {
+                "message": message
+            }
+        }
+        self.server.send_message(self.game_client, json.dumps(response))
+
+    def show_inventory(self, item_list: list[dict]):
+        response = {
+            "command": "show_inventory",
+            "payload": {
+                "items": item_list
+            }
+        }
+        self.server.send_message(self.game_client, json.dumps(response))
+
+    def set_location(self, new_location):
+        response = {
+            "command": "set_location",
+            "payload": {
+                "location": new_location,
             }
         }
         self.server.send_message(self.game_client, json.dumps(response))

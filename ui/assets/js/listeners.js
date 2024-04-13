@@ -5,12 +5,14 @@ window.addEventListener('load', function() {
 	window.ui = new UI
 })
 
-document.getElementById("submissionForm").addEventListener("submit", event => {
-	event.preventDefault();
-	const formInput = document.getElementById("formInput")
+$(document).on("click", "#displayRegions", function(e){
+	if(e.target && e.target.nodeName == "BUTTON"){
+		window.websocket.change_region(e.target.dataset.region)
+	}
+});
 
-	const message = formInput.value
-	formInput.value = ""
-
-	websocket.send(message)
+$(document).on("click", "#displayActions", function(e){
+	if(e.target && e.target.nodeName == "BUTTON"){
+		window.websocket.take_action(e.target.dataset.action)
+	}
 });

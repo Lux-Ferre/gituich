@@ -1,9 +1,10 @@
 class UI{
 	constructor() {
-		this.dataField = document.getElementById("displayData")
-		this.notification = document.getElementById("displayNotification")
+		this.displayField = document.getElementById("displayData")
+		this.notifications = document.getElementById("displayNotification")
+		this.current_location = document.getElementById("displayCurrentLocation")
 		this.player = document.getElementById("displayPlayer")
-		this.region = document.getElementById("displayRegions")
+		this.inventory = $("#displayInventory")
 	}
 	
 	update_display(instruction){
@@ -11,20 +12,31 @@ class UI{
 		const message = instruction.message
 		
 		if(clear){
-			this.dataField.value = message
+			this.displayField.value = message
 		} else {
-			this.dataField.value = this.dataField.value + message
+			this.displayField.value = this.displayField.value + message
 		}
 	}
+	
+	show_notification(instruction){
+		const message = instruction.payload.message
+		this.notifications.value = message
+	}
+	
+	show_inventory(instruction){
+		const inv_items = instruction.payload.items
+		this.inventory.empty()
+		inv_items.forEach(item=>{
+			const element_string = `<tr><td>${item.name}</td><td>${item.qty}</td><td>${item.value}</td><td>${item.total_value}</td><td>${item.weight}</td><td>${item.total_weight}</td></tr>`
 
-	update_notification(instruction){
-		const clear = instruction.clear
-		const message = instruction.message
-
-		if(clear){
-			this.notification.value = message
-		} else {
-			this.notification.value = this.notification.value + message
-		}
+			const element = $.parseHTML(element_string)
+			this.inventory.append(element)
+		})
+		console.log(inv_items)
+	}
+	
+	set_location(instruction){
+		const new_location = instruction.payload.location
+		this.current_location.textContent = new_location
 	}
 }

@@ -7,7 +7,9 @@ class WebsocketHandler{
 		this.dispatch_map = {
 			log: this.log_this,
 			display: this.display_message,
-			notification: this.display_notification
+			notify: this.show_notification,
+			set_location: this.set_location,
+			show_inventory: this.show_inventory,
 		}
 	}
 	
@@ -25,6 +27,7 @@ class WebsocketHandler{
 	
 	dispatch_ws_message(message){
 		const parsed_message = JSON.parse(message)
+		console.log(parsed_message)
 		const command = parsed_message.command
 		this.dispatch_map[command].apply(this, [parsed_message])
 	}
@@ -36,8 +39,34 @@ class WebsocketHandler{
 	display_message(parsed_message){
 		window.ui.update_display(parsed_message.payload)
 	}
+	
+	show_notification(parsed_message){
+		window.ui.show_notification(parsed_message)
+	}
+	
+	set_location(parsed_message){
+		window.ui.set_location(parsed_message)
+	}
+	
+	show_inventory(parsed_message){
+		window.ui.show_inventory(parsed_message)
+	}
+	
+	take_action(action){
+		const data_packet = {
+			method: action,
+			payload: ""
+		}
 
-	display_notification(parsed_message){
-		window.ui.update_display(parsed_message.payload)
+		this.send(JSON.stringify(data_packet))
+	}
+	
+	change_region(new_region){
+		const data_packet = {
+			method: "change_region",
+			payload: new_region
+		}
+		
+		this.send(JSON.stringify(data_packet))
 	}
 }
