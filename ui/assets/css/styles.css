@@ -2,3 +2,16 @@
   border: outset 1px;
 }
 
+.panelSelectionTab {
+  clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%);
+  padding: 5px 10px 0;
+}
+
+.panelSelectionTabActive {
+  background: rgba(0, 0, 255, 0.5);
+}
+
+.panelSelectionTabInactive {
+  background: rgba(0, 0, 150, 0.5);
+}
+

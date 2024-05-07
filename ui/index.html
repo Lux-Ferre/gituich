@@ -6,31 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>gituich-ui</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 
 <body>
     <div class="container w-100 vh-100">
-        <div class="row vh-100">
+        <div class="row">
+            <div class="col d-flex" id="panelSelectionContainer">
+                <div id="panelSelectorMain" class="panelSelectionTab panelSelectionTabActive" data-target-panel="main"><span>Main</span></div>
+                <div id="panelSelectorInv" class="panelSelectionTab panelSelectionTabInactive" data-target-panel="inv"><span>Inventory</span></div>
+            </div>
+        </div>
+        <div class="row vh-100" id="mainPanel">
             <div class="col">
-                <div class="row ui_element" style="height: 10%;">
-                    <div class="col"><textarea id="displayNotification" class="w-100 h-100"></textarea></div>
+                <div class="row ui_element" style="height:10%;">
+                    <div class="col"><textarea class="w-100 h-100" id="displayNotification"></textarea></div>
                 </div>
-                <div class="row ui_element" style="height: 45%;">
-                    <div class="col"><textarea id="displayData" class="w-100 h-100"></textarea></div>
+                <div class="row ui_element" style="height:45%;">
+                    <div class="col"><textarea class="w-100 h-100" id="displayData"></textarea></div>
                 </div>
-                <div class="row ui_element" style="height: 45%;">
+                <div class="row ui_element" style="height:45%;">
                     <div class="col" id="displayActions">
                         <div class="d-flex justify-content-around w-100 h-100">
                             <div class="d-flex align-items-center"><button class="btn btn-primary" type="button" data-action="forage">Forage</button></div>
-                            <div class="d-flex align-items-center"><button class="btn btn-primary disabled" type="button" data-action="craft" disabled="">Craft</button></div>
+                            <div class="d-flex align-items-center"><button class="btn btn-primary disabled disabled" type="button" data-action="craft" disabled="">Craft</button></div>
                             <div class="d-flex align-items-center"><button class="btn btn-primary" type="button" data-action="close_game">Exit</button></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col d-flex flex-column justify-content-evenly">
-                <div class="row ui_element" style="height: 50%;">
+                <div class="row ui_element" style="height:50%;">
                     <div class="col">
                         <div class="d-flex justify-content-around w-100 h-100" id="displayPlayer">
                             <div class="table-responsive">
@@ -51,7 +58,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row ui_element" style="height: 50%;">
+                <div class="row ui_element" style="height:50%;">
                     <div class="col" id="displayRegions">
                         <div class="text-center"><span>Current Location:&nbsp;</span><span id="displayCurrentLocation"></span></div>
                         <div class="d-flex justify-content-around w-100 h-100">
@@ -62,12 +69,20 @@
                 </div>
             </div>
         </div>
+        <div class="row d-none vh-100" id="invPanel">
+            <div class="col">
+                <div class="row ui_element" style="height:100%;">
+                    <div class="col"><textarea class="w-100 h-100"></textarea></div>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="assets/js/websocket.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/listeners.js"></script>
     <script src="assets/js/ui.js"></script>
-    <script src="assets/js/websocket.js"></script>
 </body>
 
 </html>

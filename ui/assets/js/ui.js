@@ -1,10 +1,33 @@
 class UI{
 	constructor() {
-		this.displayField = document.getElementById("displayData")
-		this.notifications = document.getElementById("displayNotification")
-		this.current_location = document.getElementById("displayCurrentLocation")
-		this.player = document.getElementById("displayPlayer")
+		this.mainPanel = $("#mainPanel")
+		this.invPanel = $("#invPanel")
+		
+		this.panelSelectorMain = $("#panelSelectorMain")
+		this.panelSelectorInv = $("#panelSelectorInv")
+		
+		this.displayField = $("#displayData")
+		this.notifications = $("#displayNotification")
+		this.current_location = $("#displayCurrentLocation")
+		this.player = $("#displayPlayer")
 		this.inventory = $("#displayInventory")
+	}
+	
+	changePanel(panelName){
+		const panelList = [this.mainPanel, this.invPanel]
+		panelList.forEach(panel=>{
+			panel.addClass("d-none")
+		})
+		switch(panelName) {
+			case "main":
+				this.mainPanel.removeClass("d-none")
+				break;
+			case "inv":
+				this.invPanel.removeClass("d-none")
+				break;
+			default:
+				console.log(panelName)
+		} 
 	}
 	
 	update_display(instruction){

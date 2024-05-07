@@ -16,3 +16,17 @@ $(document).on("click", "#displayActions", function(e){
 		window.websocket.take_action(e.target.dataset.action)
 	}
 });
+
+$(document).on("click", "#panelSelectionContainer", function(e){
+	if(e.target){
+		let node
+		if ($(e.target).data("target-panel")) {
+			node = $(e.target)
+		} else if(e.target.nodeName === "SPAN"){
+			node = $(e.target.parentNode)
+		}
+		if(node){
+			window.ui.changePanel(node.data("target-panel"))
+		}
+	}
+});
