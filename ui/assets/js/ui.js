@@ -1,11 +1,16 @@
 class UI{
 	constructor() {
-		this.mainPanel = $("#mainPanel")
-		this.invPanel = $("#invPanel")
-		
-		this.panelSelectorMain = $("#panelSelectorMain")
-		this.panelSelectorInv = $("#panelSelectorInv")
-		
+		this.panels = {
+			main: {
+				tab: $("#panelSelectorMain"),
+				panel: $("#mainPanel")
+			},
+			inv: {
+				tab: $("#panelSelectorInv"),
+				panel: $("#invPanel")
+			}
+		}
+				
 		this.displayField = $("#displayData")
 		this.notifications = $("#displayNotification")
 		this.current_location = $("#displayCurrentLocation")
@@ -14,20 +19,15 @@ class UI{
 	}
 	
 	changePanel(panelName){
-		const panelList = [this.mainPanel, this.invPanel]
-		panelList.forEach(panel=>{
-			panel.addClass("d-none")
-		})
-		switch(panelName) {
-			case "main":
-				this.mainPanel.removeClass("d-none")
-				break;
-			case "inv":
-				this.invPanel.removeClass("d-none")
-				break;
-			default:
-				console.log(panelName)
-		} 
+		for (const [ident, panel] of Object.entries(this.panels)) {
+			if(ident===panelName){
+				panel.panel.removeClass("d-none")
+				panel.tab.removeClass("panelSelectionTabInactive").addClass("panelSelectionTabActive")
+			} else {
+				panel.panel.addClass("d-none")
+				panel.tab.removeClass("panelSelectionTabActive").addClass("panelSelectionTabInactive")
+			}
+		}
 	}
 	
 	update_display(instruction){
