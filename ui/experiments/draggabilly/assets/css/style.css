@@ -1,0 +1,24 @@
+.grid {
+  background-image: repeating-linear-gradient(#555555 0 1px, transparent 1px 100%), repeating-linear-gradient(90deg, #555555 0 1px, transparent 1px 100%);
+  background-size: 20px 20px;
+}
+
+#draggable_container {
+  width: 802px;
+  height: 802px;
+  position: relative;
+}
+
+.draggable_item {
+  height: 80px;
+  width: 80px;
+  background-color: red;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.bordered_container {
+  border: white ridge 1px;
+}
+
