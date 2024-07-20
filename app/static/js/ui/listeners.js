@@ -1,19 +1,16 @@
-window.addEventListener('load', function() {
-	window.websocket = new WebsocketHandler
-	websocket.connect_to_socket()
-	
-	window.ui = new UI
+$(window).on("load", ()=>{
+	window.game.start()
 })
 
 $(document).on("click", "#displayRegions", function(e){
 	if(e.target && e.target.nodeName == "BUTTON"){
-		window.websocket.change_region(e.target.dataset.region)
+		window.game.change_region(e.target.dataset.region)
 	}
 });
 
 $(document).on("click", "#displayActions", function(e){
 	if(e.target && e.target.nodeName == "BUTTON"){
-		window.websocket.take_action(e.target.dataset.action)
+		window.game[e.target.dataset.action]()
 	}
 });
 
